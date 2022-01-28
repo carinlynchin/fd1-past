@@ -1,0 +1,49 @@
+.fd_sprite {
+    background-image: url(https://www.fd1.com/video_production/spritesheet.png);
+    background-repeat: no-repeat;
+    display: block;
+}
+
+.fd_sprite-adress-ico {
+    width: 18px;
+    height: 19px;
+    background-position: -5px -5px;
+}
+
+.fd_sprite-f-next {
+    width: 30px;
+    height: 57px;
+    background-position: -5px -34px;
+}
+
+.fd_sprite-f-prev {
+    width: 30px;
+    height: 57px;
+    background-position: -5px -101px;
+}
+
+.fd_sprite-hours-ico {
+    width: 18px;
+    height: 19px;
+    background-position: -5px -168px;
+}
+
+.fd_sprite-loading {
+    width: 40px;
+    height: 40px;
+    background-position: -5px -197px;
+}
+
+.fd_sprite-mail-ico {
+    width: 18px;
+    height: 19px;
+    background-position: -5px -247px;
+}
+
+.fd_sprite-phone-ico {
+    width: 18px;
+    height: 19px;
+    background-position: -5px -276px;
+}
+
+

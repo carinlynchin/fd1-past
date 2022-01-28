@@ -1,0 +1,108 @@
+
+html {
+  font-family: "Ubuntu Mono" arial, sans-serif;
+  background: grey;
+/*  text-align: center;*/
+  color: white;
+}
+.page-wrap {
+  margin: 0 auto;
+  width: 600px;
+  max-width: 100%;
+  padding-top: 25px;
+}
+.toggle-function {
+  text-align: center;
+  width: 100%;
+  display: block;
+  margin: 10px 0 25px 0;
+}
+.beforeafter {
+    width: 100%;
+}
+.beforeafter img {
+    width: 500px;
+    max-width: initial;
+    max-height: initial;
+}
+
+.btn {
+  display: inline-block;
+  padding: .5em;
+  text-align: center;
+  border: 2px solid white;
+  cursor: pointer;
+  background-color: white;
+  color: #d1d1de;
+}
+.btn:nth-child(2) {
+  border-left: none;
+}
+.btn:nth-child(1) {
+  background-color: transparent;
+  color: white;
+}
+.stay .btn {
+  background-color: #d1d1de;
+  color: white;
+}
+.stay .btn:nth-child(1) {
+  background-color: white;
+  color: #d1d1de;
+}
+
+.vfx-image-wrap {
+  position: relative;
+  display: inline-block;
+  margin: 0 auto;
+  /* width: 600px; */
+  min-height: 273px;
+  margin-bottom: 40px;
+
+  // Finally a use for this guy... I've always wondered...
+  cursor: ew-resize;
+}
+.before-image {
+  width: 50%;
+  position: absolute;
+  top: 0;
+  left: 0;
+  z-index: 1;
+  overflow: hidden;
+}
+.after-image {
+  width: 100%;
+  position: absolute;
+  top: 0;
+  left: 0;
+  z-index: 0;
+}
+
+.divider-bar {
+  position: absolute;
+  width: 2px;
+  left: 50%;
+  top: -10px;
+  bottom: -15px;
+  background: white;
+  height: 100%;
+  display: block;
+  z-index: 2;
+  box-shadow: 0 0 10px 1px rgba(0, 0, 0, 0.4);
+}
+
+@media screen and (max-width: 1260px) {
+    .beforeafter img {
+        width: 385px;
+    }
+}
+@media screen and (max-width: 600px) {
+    .vfx-image-wrap {
+        min-height: 200px;
+    }
+}
+@media screen and (max-width: 390px) {
+    .beforeafter img {
+        width: 100vw;
+    }
+}

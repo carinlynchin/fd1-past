@@ -1,0 +1,1093 @@
+@import "compass/css3";
+
+// *************************************
+//
+//   Steps Flow
+//   author: CJ
+//   --> modified 5/30
+//
+// *************************************
+
+// -------------------------------------
+//   Variables
+// -------------------------------------
+
+$steps-height: 30px;
+
+$steps-width: 80px;
+$steps-width-m: 50px;
+$steps-width-s: 20px;
+
+$steps-circle: 30px;
+$steps-circle-s: $steps-circle * 0.5;
+$steps-circle-l: $steps-circle * 1.25;
+
+$steps-tooltip: 150px;
+
+// Timer
+$steps-timer: 200ms;
+$steps-timer-l: 400ms;
+
+// Text Color
+$steps-color: #c0c0c0;
+$steps-color-current: #009fe8;
+
+$c-text-light: #fff;
+$font-base: 13px;
+
+// -------------------------------------
+//   Mixins
+// -------------------------------------
+
+@mixin point-size($_size) {
+  width: $_size;
+  height: $_size;
+  margin-top: -($_size / 2);
+  margin-right: -($_size / 2);
+}
+
+@mixin circle-size($_size) {
+  width: $_size;
+  height: $_size;
+  line-height: $_size;
+  @include border-radius($_size / 2);
+}
+
+@mixin steps-color($_left-color, $_left-color-position, $_right-color, $_right-color-position) {
+  background: $steps-color;
+  @include background(linear-gradient(to right, $_left-color $_left-color-position, $_right-color $_right-color-position));
+  background-size: 200% 100%;
+  background-position: right top;
+}
+
+// -------------------------------------
+//   Fontawesome Icon
+//   https://codepen.io/geoffyuen/pen/IAJBy
+// -------------------------------------
+
+@import url(http://weloveiconfonts.com/api/?family=fontawesome);
+[class*="fontawesome-"]:before {
+  font-family: "FontAwesome", sans-serif;
+}
+
+// -------------------------------------
+//   Body
+// -------------------------------------
+
+html,
+body {
+  position: relative;
+  width: 100%;
+  height: 100%;
+  margin: 0;
+}
+
+body {
+  background: #333;
+  font-family: Arial, sans-serif;
+  font-weight: 300;
+  text-decoration: none;
+}
+
+a {
+  color: $c-text-light;
+  &:hover {
+    color: $steps-color-current;
+  }
+}
+
+// -------------------------------------
+//   Steps Outer Box
+// -------------------------------------
+
+.steps-box {
+  display: block;
+  margin: 0 auto;
+  height: 100%;
+  width: 50%;
+  text-align: center;
+  &:before {
+    content: "";
+    display: inline-block;
+    height: 100%;
+    vertical-align: middle;
+    margin-right: -0.25em;
+  }
+}
+
+// -------------------------------------
+//   Steps
+// -------------------------------------
+
+.steps {
+  position: relative;
+  display: inline-block;
+  width: $steps-width;
+  height: $steps-height;
+  font-size: $font-base;
+  color: $c-text-light;
+
+  // Steps Line
+  &:before {
+    content: "";
+    position: absolute;
+    top: 50%;
+    right: 0;
+    width: 100%;
+    height: 5px;
+    margin-top: -2.5px;
+    z-index: -1;
+    // Style
+    @include steps-color($steps-color, 50%, $steps-color, 50%);
+  }
+
+  // First Child
+  &:nth-child(1) {
+    width: 0 !important;
+    &:before {
+      display: none;
+    }
+  }
+}
+
+// -------------------------------------
+//   Steps Point
+// -------------------------------------
+
+.steps-point {
+  display: inline-block;
+  position: absolute;
+  top: 50%;
+  right: 0;
+  @include point-size($steps-circle);
+  &:hover {
+    padding-bottom: 15px; // Extend hover area - Thanks @ryanmcnz
+  }
+}
+
+// -------------------------------------
+//   Steps Cicle
+// -------------------------------------
+
+.steps-circle {
+  display: inline-block;
+  position: absolute;
+  top: 0;
+  left: 0;
+  cursor: pointer;
+  @include transition(transform $steps-timer-l ease-out);
+  // Size
+  @include circle-size($steps-circle);
+  // Style
+  @include steps-color($steps-color, 50%, $steps-color, 50%);
+  @include box-shadow(0px 1px 3px 0px rgba(0, 0, 0, 0.3));
+
+  // Completed Icon
+  &:before {
+    content: "\f00c";
+    font-family: "FontAwesome", sans-serif;
+    font-size: $font-base;
+    display: none; // Hide first
+  }
+
+  // Uncomplete Icon
+  &:after {
+    content: "\f071";
+    font-family: "FontAwesome", sans-serif;
+    font-size: $font-base;
+    line-height: 1;
+    position: absolute;
+    right: -2px;
+    bottom: -2px;
+    color: orange;
+    @include text-shadow(0 1px 2px rgba(0, 0, 0, 0.8));
+  }
+
+  &:hover {
+    @include transform(scale(1.1, 1.1));
+  }
+}
+
+// -------------------------------------
+//   States Title
+// -------------------------------------
+
+.steps-title {
+  opacity: 0;
+  position: absolute;
+  top: -25px;
+  left: 50%;
+  line-height: 1.2;
+  color: darken($c-text-light, 20%);
+  @include transition(color $steps-timer-l ease-out);
+  // Overflow Ellipsis
+  overflow: hidden;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+  width: $steps-width;
+  margin-left: - ($steps-width / 2);
+}
+
+// -------------------------------------
+//   States Tooltip
+// -------------------------------------
+
+.steps-tooltip {
+  display: none;
+  position: absolute;
+  top: $steps-circle + 10px;
+  left: ($steps-circle / 2) - 15px;
+  width: $steps-tooltip + 20px;
+  padding: 10px;
+  background: rgba(0, 0, 0, 0.8);
+  text-align: left;
+  @include border-radius(3px);
+  &:before {
+    content: "";
+    display: block;
+    position: absolute;
+    top: -5px;
+    left: 10px;
+    width: 0px;
+    height: 0px;
+    border-style: solid;
+    border-width: 0 5px 5px 5px;
+    border-color: transparent transparent rgba(0, 0, 0, 0.8) transparent;
+  }
+  .tooltip-step {
+    font-weight: bold;
+    &:after {
+      display: inline-block;
+      content: "(uncompleted)";
+      margin-left: 5px;
+      color: orange;
+    }
+  }
+  .tooltip-title {
+    font-weight: bold;
+    margin-bottom: 5px;
+  }
+} // END steps-tooltip
+
+// -------------------------------------
+//   Statements
+// -------------------------------------
+
+.steps {
+  //*** Mini State ***//
+  &.is-mini {
+    width: $steps-width-s;
+    .steps-point {
+      @include point-size($steps-circle-s);
+    }
+    .steps-circle {
+      font-size: 0;
+      @include circle-size($steps-circle-s);
+      &:before,
+      &:after {
+        font-size: $font-base - 5px;
+      }
+    }
+    .steps-title {
+      display: none;
+    }
+    .steps-tooltip {
+      top: $steps-circle-s + 10px;
+      left: ($steps-circle-s / 2) - 15px;
+    }
+    // If next not mini
+    & + :not(.is-mini) {
+      width: $steps-width-m;
+    }
+  }
+
+  //*** Completed State ***//
+  &.is-completed {
+    // Show completed-icon
+    .steps-circle {
+      font-size: 0;
+      &:before {
+        display: inline-block;
+      }
+      &:after {
+        display: none;
+      }
+    }
+    // Change color of next line
+    .steps-circle,
+    & + .is-completed:before,
+    & + .is-current:before {
+      @include steps-color($steps-color-current, 50%, $steps-color, 50%);
+    }
+    .steps-tooltip .tooltip-step:after {
+      display: none;
+    }
+  }
+
+  //*** Current State ***//
+  &.is-current {
+    .steps-point {
+      @include point-size($steps-circle-l);
+    }
+    .steps-circle {
+      @include circle-size($steps-circle-l);
+      // Text Style
+      font-size: $font-base + 5px;
+      font-weight: bold;
+      @include text-shadow(0 1px 0 rgba(0, 0, 0, 0.8));
+      @include box-shadow(0 2px 4px 0px rgba(0, 0, 0, 0.3));
+      &:after {
+        display: none;
+      }
+    }
+    .steps-title {
+      color: $c-text-light;
+      font-weight: bold;
+    }
+    .steps-tooltip {
+      top: $steps-circle-l + 10px;
+      left: ($steps-circle-l / 2) - 15px;
+    }
+    .steps-circle {
+      @include steps-color($steps-color-current, 50%, $steps-color, 50%);
+    }
+    // Change color of next line
+    & + .steps:before {
+      @include steps-color($steps-color-current, 0, $steps-color, 40%);
+    }
+    .steps-tooltip .tooltip-step:after {
+      display: none;
+    }
+    // Hide uncomplete icon after current
+    & ~ .steps {
+      .steps-circle:after {
+        display: none;
+      }
+      .steps-tooltip .tooltip-step:after {
+        display: none;
+      }
+    }
+  }
+} // END steps-point
+
+// -------------------------------------
+//   Hover
+// -------------------------------------
+
+.steps-point:hover {
+  .steps-title {
+    color: $c-text-light;
+  }
+  .steps-tooltip {
+    display: block;
+    @include animation(stepsTooltipIn $steps-timer-l linear forwards);
+  }
+}
+
+// -------------------------------------
+//   Animation
+// -------------------------------------
+
+.steps {
+  //*** Circle & Line Enter ***//
+  &.is-circle-entering {
+    &:before {
+      opacity: 0;
+      @include animation(stepsBounceIn $steps-timer-l linear forwards);
+      @include transform-origin(0, 0);
+    }
+    .steps-circle {
+      opacity: 0;
+      @include animation(stepsBounceIn $steps-timer-l linear forwards);
+    }
+  }
+
+  //*** Line Flow ***//
+  &.is-line-entering {
+    &:before {
+      opacity: 1;
+      @include animation(stepsLineIn $steps-timer linear forwards);
+    }
+    .steps-circle {
+      opacity: 1;
+      @include animation(stepsLineIn $steps-timer $steps-timer linear forwards);
+    }
+  }
+
+  //*** Title Enter ***//
+  &.is-title-entering {
+    .steps-title {
+      opacity: 0;
+      @include animation(stepsTitleIn $steps-timer-l linear forwards);
+    }
+  }
+} // END steps
+
+// -------------------------------------
+//   Animation Keyframes
+//   Bounce: https://daneden.github.io/animate.css/
+// -------------------------------------
+
+// ----- Tooltip In ----- //
+
+@keyframes stepsTooltipIn {
+  from {
+    @include transform(translate(0, -10px));
+    @include opacity(0);
+  }
+  to {
+    @include transform(translate(0, 0));
+    @include opacity(1);
+  }
+}
+@-webkit-keyframes stepsTooltipIn {
+  from {
+    -webkit-transform: translate(0, -10px);
+    opacity: 0;
+  }
+  to {
+    -webkit-transform: translate(0, 0);
+    opacity: 1;
+  }
+}
+
+// ----- Bounce In ----- //
+
+@keyframes stepsBounceIn {
+  0%,
+  20%,
+  40%,
+  60%,
+  80%,
+  100% {
+    transition-time-function: cubic-bezier(0.215, 0.61, 0.355, 1);
+  }
+  0% {
+    @include transform(scale(0.3, 0.3));
+    @include opacity(1);
+  }
+
+  20% {
+    @include transform(scale(1.1, 1.1));
+    @include opacity(1);
+  }
+
+  40% {
+    @include transform(scale(0.9, 0.9));
+    @include opacity(1);
+  }
+
+  60% {
+    @include transform(scale(1.03, 1.03));
+    @include opacity(1);
+  }
+
+  80% {
+    @include transform(scale(0.97, 0.97));
+    @include opacity(1);
+  }
+
+  100% {
+    @include transform(scale(1, 1));
+    @include opacity(1);
+  }
+}
+@-webkit-keyframes stepsBounceIn {
+  0%,
+  20%,
+  40%,
+  60%,
+  80%,
+  100% {
+    -webkit-transition-time-function: cubic-bezier(0.215, 0.61, 0.355, 1);
+  }
+  0% {
+    -webkit-transform: scale(0.3, 0.3);
+    opacity: 1;
+  }
+
+  20% {
+    -webkit-transform: scale(1.1, 1.1);
+    opacity: 1;
+  }
+
+  40% {
+    -webkit-transform: scale(0.9, 0.9);
+    opacity: 1;
+  }
+
+  60% {
+    -webkit-transform: scale(1.03, 1.03);
+    opacity: 1;
+  }
+
+  80% {
+    -webkit-transform: scale(0.97, 0.97);
+    opacity: 1;
+  }
+
+  100% {
+    -webkit-transform: scale(1, 1);
+    opacity: 1;
+  }
+}
+
+// ----- Line In ----- //
+
+@keyframes stepsLineIn {
+  from {
+    background-position: right top;
+    opacity: 1;
+  }
+  to {
+    background-position: left top;
+    opacity: 1;
+  }
+}
+@-webkit-keyframes stepsLineIn {
+  from {
+    background-position: right top;
+    opacity: 1;
+  }
+  to {
+    background-position: left top;
+    opacity: 1;
+  }
+}
+
+// ----- Title In ----- //
+
+@keyframes stepsTitleIn {
+  from {
+    @include transform(translate(0, 10px));
+    @include opacity(0);
+  }
+  to {
+    @include transform(translate(0, 0));
+    @include opacity(1);
+  }
+}
+@-webkit-keyframes stepsTitleIn {
+  from {
+    -webkit-transform: translate(0, 10px);
+    opacity: 0;
+  }
+  to {
+    -webkit-transform: translate(0, 0);
+    opacity: 1;
+  }
+}
+@import url(http://weloveiconfonts.com/api/?family=fontawesome);
+[class*="fontawesome-"]:before {
+  font-family: 'FontAwesome', sans-serif;
+}
+
+html, body {
+  position: relative;
+  width: 100%;
+  height: 100%;
+  margin: 0;
+}
+
+body {
+  background: #333;
+  font-family: Arial, sans-serif;
+  font-weight: 300;
+  text-decoration: none;
+}
+
+a {
+  color: #fff;
+}
+a:hover {
+  color: #009FE8;
+}
+
+.steps-box {
+  display: block;
+  margin: 0 auto;
+  height: 100%;
+  width: 50%;
+  text-align: center;
+}
+.steps-box:before {
+  content: "";
+  display: inline-block;
+  height: 100%;
+  vertical-align: middle;
+  margin-right: -0.25em;
+}
+
+.steps {
+  position: relative;
+  display: inline-block;
+  width: 80px;
+  height: 30px;
+  font-size: 13px;
+  color: #fff;
+}
+.steps:before {
+  content: "";
+  position: absolute;
+  top: 50%;
+  right: 0;
+  width: 100%;
+  height: 5px;
+  margin-top: -2.5px;
+  z-index: -1;
+  background: #C0C0C0;
+  background: url('data:image/svg+xml;base64,PD94bWwgdmVyc2lvbj0iMS4wIiBlbmNvZGluZz0idXRmLTgiPz4gPHN2ZyB2ZXJzaW9uPSIxLjEiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+PGRlZnM+PGxpbmVhckdyYWRpZW50IGlkPSJncmFkIiBncmFkaWVudFVuaXRzPSJvYmplY3RCb3VuZGluZ0JveCIgeDE9IjAuMCIgeTE9IjAuNSIgeDI9IjEuMCIgeTI9IjAuNSI+PHN0b3Agb2Zmc2V0PSI1MCUiIHN0b3AtY29sb3I9IiNjMGMwYzAiLz48c3RvcCBvZmZzZXQ9IjUwJSIgc3RvcC1jb2xvcj0iI2MwYzBjMCIvPjwvbGluZWFyR3JhZGllbnQ+PC9kZWZzPjxyZWN0IHg9IjAiIHk9IjAiIHdpZHRoPSIxMDAlIiBoZWlnaHQ9IjEwMCUiIGZpbGw9InVybCgjZ3JhZCkiIC8+PC9zdmc+IA==');
+  background: -webkit-gradient(linear, 0% 50%, 100% 50%, color-stop(50%, #c0c0c0), color-stop(50%, #c0c0c0));
+  background: -moz-linear-gradient(left, #c0c0c0 50%, #c0c0c0 50%);
+  background: -webkit-linear-gradient(left, #c0c0c0 50%, #c0c0c0 50%);
+  background: linear-gradient(to right, #c0c0c0 50%, #c0c0c0 50%);
+  background-size: 200% 100%;
+  background-position: right top;
+}
+.steps:nth-child(1) {
+  width: 0 !important;
+}
+.steps:nth-child(1):before {
+  display: none;
+}
+
+.steps-point {
+  display: inline-block;
+  position: absolute;
+  top: 50%;
+  right: 0;
+  width: 30px;
+  height: 30px;
+  margin-top: -15px;
+  margin-right: -15px;
+}
+.steps-point:hover {
+  padding-bottom: 15px;
+}
+
+.steps-circle {
+  display: inline-block;
+  position: absolute;
+  top: 0;
+  left: 0;
+  cursor: pointer;
+  -moz-transition: -moz-transform 400ms ease-out;
+  -o-transition: -o-transform 400ms ease-out;
+  -webkit-transition: -webkit-transform 400ms ease-out;
+  transition: transform 400ms ease-out;
+  width: 30px;
+  height: 30px;
+  line-height: 30px;
+  -moz-border-radius: 15px;
+  -webkit-border-radius: 15px;
+  border-radius: 15px;
+  background: #C0C0C0;
+  background: url('data:image/svg+xml;base64,PD94bWwgdmVyc2lvbj0iMS4wIiBlbmNvZGluZz0idXRmLTgiPz4gPHN2ZyB2ZXJzaW9uPSIxLjEiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+PGRlZnM+PGxpbmVhckdyYWRpZW50IGlkPSJncmFkIiBncmFkaWVudFVuaXRzPSJvYmplY3RCb3VuZGluZ0JveCIgeDE9IjAuMCIgeTE9IjAuNSIgeDI9IjEuMCIgeTI9IjAuNSI+PHN0b3Agb2Zmc2V0PSI1MCUiIHN0b3AtY29sb3I9IiNjMGMwYzAiLz48c3RvcCBvZmZzZXQ9IjUwJSIgc3RvcC1jb2xvcj0iI2MwYzBjMCIvPjwvbGluZWFyR3JhZGllbnQ+PC9kZWZzPjxyZWN0IHg9IjAiIHk9IjAiIHdpZHRoPSIxMDAlIiBoZWlnaHQ9IjEwMCUiIGZpbGw9InVybCgjZ3JhZCkiIC8+PC9zdmc+IA==');
+  background: -webkit-gradient(linear, 0% 50%, 100% 50%, color-stop(50%, #c0c0c0), color-stop(50%, #c0c0c0));
+  background: -moz-linear-gradient(left, #c0c0c0 50%, #c0c0c0 50%);
+  background: -webkit-linear-gradient(left, #c0c0c0 50%, #c0c0c0 50%);
+  background: linear-gradient(to right, #c0c0c0 50%, #c0c0c0 50%);
+  background-size: 200% 100%;
+  background-position: right top;
+  -moz-box-shadow: 0px 1px 3px 0px rgba(0, 0, 0, 0.3);
+  -webkit-box-shadow: 0px 1px 3px 0px rgba(0, 0, 0, 0.3);
+  box-shadow: 0px 1px 3px 0px rgba(0, 0, 0, 0.3);
+}
+.steps-circle:before {
+  content: "\f00c";
+  font-family: 'FontAwesome', sans-serif;
+  font-size: 13px;
+  display: none;
+}
+.steps-circle:after {
+  content: "\f071";
+  font-family: 'FontAwesome', sans-serif;
+  font-size: 13px;
+  line-height: 1;
+  position: absolute;
+  right: -2px;
+  bottom: -2px;
+  color: orange;
+  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.8);
+}
+.steps-circle:hover {
+  -moz-transform: scale(1.1, 1.1);
+  -ms-transform: scale(1.1, 1.1);
+  -webkit-transform: scale(1.1, 1.1);
+  transform: scale(1.1, 1.1);
+}
+
+.steps-title {
+  opacity: 0;
+  position: absolute;
+  top: -25px;
+  left: 50%;
+  line-height: 1.2;
+  color: #cccccc;
+  -moz-transition: color 400ms ease-out;
+  -o-transition: color 400ms ease-out;
+  -webkit-transition: color 400ms ease-out;
+  transition: color 400ms ease-out;
+  overflow: hidden;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+  width: 80px;
+  margin-left: -40px;
+}
+
+.steps-tooltip {
+  display: none;
+  position: absolute;
+  top: 40px;
+  left: 0px;
+  width: 170px;
+  padding: 10px;
+  background: rgba(0, 0, 0, 0.8);
+  text-align: left;
+  -moz-border-radius: 3px;
+  -webkit-border-radius: 3px;
+  border-radius: 3px;
+}
+.steps-tooltip:before {
+  content: "";
+  display: block;
+  position: absolute;
+  top: -5px;
+  left: 10px;
+  width: 0px;
+  height: 0px;
+  border-style: solid;
+  border-width: 0 5px 5px 5px;
+  border-color: transparent transparent rgba(0, 0, 0, 0.8) transparent;
+}
+.steps-tooltip .tooltip-step {
+  font-weight: bold;
+}
+.steps-tooltip .tooltip-step:after {
+  display: inline-block;
+  content: "(uncompleted)";
+  margin-left: 5px;
+  color: orange;
+}
+.steps-tooltip .tooltip-title {
+  font-weight: bold;
+  margin-bottom: 5px;
+}
+
+.steps.is-mini {
+  width: 20px;
+}
+.steps.is-mini .steps-point {
+  width: 15px;
+  height: 15px;
+  margin-top: -7.5px;
+  margin-right: -7.5px;
+}
+.steps.is-mini .steps-circle {
+  font-size: 0;
+  width: 15px;
+  height: 15px;
+  line-height: 15px;
+  -moz-border-radius: 7.5px;
+  -webkit-border-radius: 7.5px;
+  border-radius: 7.5px;
+}
+.steps.is-mini .steps-circle:before, .steps.is-mini .steps-circle:after {
+  font-size: 8px;
+}
+.steps.is-mini .steps-title {
+  display: none;
+}
+.steps.is-mini .steps-tooltip {
+  top: 25px;
+  left: -7.5px;
+}
+.steps.is-mini + :not(.is-mini) {
+  width: 50px;
+}
+.steps.is-completed .steps-circle {
+  font-size: 0;
+}
+.steps.is-completed .steps-circle:before {
+  display: inline-block;
+}
+.steps.is-completed .steps-circle:after {
+  display: none;
+}
+.steps.is-completed .steps-circle, .steps.is-completed + .is-completed:before, .steps.is-completed + .is-current:before {
+  background: #C0C0C0;
+  background: url('data:image/svg+xml;base64,PD94bWwgdmVyc2lvbj0iMS4wIiBlbmNvZGluZz0idXRmLTgiPz4gPHN2ZyB2ZXJzaW9uPSIxLjEiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+PGRlZnM+PGxpbmVhckdyYWRpZW50IGlkPSJncmFkIiBncmFkaWVudFVuaXRzPSJvYmplY3RCb3VuZGluZ0JveCIgeDE9IjAuMCIgeTE9IjAuNSIgeDI9IjEuMCIgeTI9IjAuNSI+PHN0b3Agb2Zmc2V0PSI1MCUiIHN0b3AtY29sb3I9IiMwMDlmZTgiLz48c3RvcCBvZmZzZXQ9IjUwJSIgc3RvcC1jb2xvcj0iI2MwYzBjMCIvPjwvbGluZWFyR3JhZGllbnQ+PC9kZWZzPjxyZWN0IHg9IjAiIHk9IjAiIHdpZHRoPSIxMDAlIiBoZWlnaHQ9IjEwMCUiIGZpbGw9InVybCgjZ3JhZCkiIC8+PC9zdmc+IA==');
+  background: -webkit-gradient(linear, 0% 50%, 100% 50%, color-stop(50%, #009fe8), color-stop(50%, #c0c0c0));
+  background: -moz-linear-gradient(left, #009fe8 50%, #c0c0c0 50%);
+  background: -webkit-linear-gradient(left, #009fe8 50%, #c0c0c0 50%);
+  background: linear-gradient(to right, #009fe8 50%, #c0c0c0 50%);
+  background-size: 200% 100%;
+  background-position: right top;
+}
+.steps.is-completed .steps-tooltip .tooltip-step:after {
+  display: none;
+}
+.steps.is-current .steps-point {
+  width: 37.5px;
+  height: 37.5px;
+  margin-top: -18.75px;
+  margin-right: -18.75px;
+}
+.steps.is-current .steps-circle {
+  width: 37.5px;
+  height: 37.5px;
+  line-height: 37.5px;
+  -moz-border-radius: 18.75px;
+  -webkit-border-radius: 18.75px;
+  border-radius: 18.75px;
+  font-size: 18px;
+  font-weight: bold;
+  text-shadow: 0 1px 0 rgba(0, 0, 0, 0.8);
+  -moz-box-shadow: 0 2px 4px 0px rgba(0, 0, 0, 0.3);
+  -webkit-box-shadow: 0 2px 4px 0px rgba(0, 0, 0, 0.3);
+  box-shadow: 0 2px 4px 0px rgba(0, 0, 0, 0.3);
+}
+.steps.is-current .steps-circle:after {
+  display: none;
+}
+.steps.is-current .steps-title {
+  color: #fff;
+  font-weight: bold;
+}
+.steps.is-current .steps-tooltip {
+  top: 47.5px;
+  left: 3.75px;
+}
+.steps.is-current .steps-circle {
+  background: #C0C0C0;
+  background: url('data:image/svg+xml;base64,PD94bWwgdmVyc2lvbj0iMS4wIiBlbmNvZGluZz0idXRmLTgiPz4gPHN2ZyB2ZXJzaW9uPSIxLjEiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+PGRlZnM+PGxpbmVhckdyYWRpZW50IGlkPSJncmFkIiBncmFkaWVudFVuaXRzPSJvYmplY3RCb3VuZGluZ0JveCIgeDE9IjAuMCIgeTE9IjAuNSIgeDI9IjEuMCIgeTI9IjAuNSI+PHN0b3Agb2Zmc2V0PSI1MCUiIHN0b3AtY29sb3I9IiMwMDlmZTgiLz48c3RvcCBvZmZzZXQ9IjUwJSIgc3RvcC1jb2xvcj0iI2MwYzBjMCIvPjwvbGluZWFyR3JhZGllbnQ+PC9kZWZzPjxyZWN0IHg9IjAiIHk9IjAiIHdpZHRoPSIxMDAlIiBoZWlnaHQ9IjEwMCUiIGZpbGw9InVybCgjZ3JhZCkiIC8+PC9zdmc+IA==');
+  background: -webkit-gradient(linear, 0% 50%, 100% 50%, color-stop(50%, #009fe8), color-stop(50%, #c0c0c0));
+  background: -moz-linear-gradient(left, #009fe8 50%, #c0c0c0 50%);
+  background: -webkit-linear-gradient(left, #009fe8 50%, #c0c0c0 50%);
+  background: linear-gradient(to right, #009fe8 50%, #c0c0c0 50%);
+  background-size: 200% 100%;
+  background-position: right top;
+}
+.steps.is-current + .steps:before {
+  background: #C0C0C0;
+  background: url('data:image/svg+xml;base64,PD94bWwgdmVyc2lvbj0iMS4wIiBlbmNvZGluZz0idXRmLTgiPz4gPHN2ZyB2ZXJzaW9uPSIxLjEiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+PGRlZnM+PGxpbmVhckdyYWRpZW50IGlkPSJncmFkIiBncmFkaWVudFVuaXRzPSJvYmplY3RCb3VuZGluZ0JveCIgeDE9IjAuMCIgeTE9IjAuNSIgeDI9IjEuMCIgeTI9IjAuNSI+PHN0b3Agb2Zmc2V0PSIwJSIgc3RvcC1jb2xvcj0iIzAwOWZlOCIvPjxzdG9wIG9mZnNldD0iNDAlIiBzdG9wLWNvbG9yPSIjYzBjMGMwIi8+PC9saW5lYXJHcmFkaWVudD48L2RlZnM+PHJlY3QgeD0iMCIgeT0iMCIgd2lkdGg9IjEwMCUiIGhlaWdodD0iMTAwJSIgZmlsbD0idXJsKCNncmFkKSIgLz48L3N2Zz4g');
+  background: -webkit-gradient(linear, 0% 50%, 100% 50%, color-stop(0%, #009fe8), color-stop(40%, #c0c0c0));
+  background: -moz-linear-gradient(left, #009fe8 0%, #c0c0c0 40%);
+  background: -webkit-linear-gradient(left, #009fe8 0%, #c0c0c0 40%);
+  background: linear-gradient(to right, #009fe8 0%, #c0c0c0 40%);
+  background-size: 200% 100%;
+  background-position: right top;
+}
+.steps.is-current .steps-tooltip .tooltip-step:after {
+  display: none;
+}
+.steps.is-current ~ .steps .steps-circle:after {
+  display: none;
+}
+.steps.is-current ~ .steps .steps-tooltip .tooltip-step:after {
+  display: none;
+}
+
+.steps-point:hover .steps-title {
+  color: #fff;
+}
+.steps-point:hover .steps-tooltip {
+  display: block;
+  -moz-animation: stepsTooltipIn 400ms linear forwards;
+  -webkit-animation: stepsTooltipIn 400ms linear forwards;
+  animation: stepsTooltipIn 400ms linear forwards;
+}
+
+.steps.is-circle-entering:before {
+  opacity: 0;
+  -moz-animation: stepsBounceIn 400ms linear forwards;
+  -webkit-animation: stepsBounceIn 400ms linear forwards;
+  animation: stepsBounceIn 400ms linear forwards;
+  -moz-transform-origin: 0 0;
+  -ms-transform-origin: 0 0;
+  -webkit-transform-origin: 0 0;
+  transform-origin: 0 0;
+}
+.steps.is-circle-entering .steps-circle {
+  opacity: 0;
+  -moz-animation: stepsBounceIn 400ms linear forwards;
+  -webkit-animation: stepsBounceIn 400ms linear forwards;
+  animation: stepsBounceIn 400ms linear forwards;
+}
+.steps.is-line-entering:before {
+  opacity: 1;
+  -moz-animation: stepsLineIn 200ms linear forwards;
+  -webkit-animation: stepsLineIn 200ms linear forwards;
+  animation: stepsLineIn 200ms linear forwards;
+}
+.steps.is-line-entering .steps-circle {
+  opacity: 1;
+  -moz-animation: stepsLineIn 200ms 200ms linear forwards;
+  -webkit-animation: stepsLineIn 200ms 200ms linear forwards;
+  animation: stepsLineIn 200ms 200ms linear forwards;
+}
+.steps.is-title-entering .steps-title {
+  opacity: 0;
+  -moz-animation: stepsTitleIn 400ms linear forwards;
+  -webkit-animation: stepsTitleIn 400ms linear forwards;
+  animation: stepsTitleIn 400ms linear forwards;
+}
+
+@keyframes stepsTooltipIn {
+  from {
+    -moz-transform: translate(0, -10px);
+    -ms-transform: translate(0, -10px);
+    -webkit-transform: translate(0, -10px);
+    transform: translate(0, -10px);
+    filter: progid:DXImageTransform.Microsoft.Alpha(Opacity=0);
+    opacity: 0;
+  }
+  to {
+    -moz-transform: translate(0, 0);
+    -ms-transform: translate(0, 0);
+    -webkit-transform: translate(0, 0);
+    transform: translate(0, 0);
+    filter: progid:DXImageTransform.Microsoft.Alpha(enabled=false);
+    opacity: 1;
+  }
+}
+@-webkit-keyframes stepsTooltipIn {
+  from {
+    -webkit-transform: translate(0, -10px);
+    opacity: 0;
+  }
+  to {
+    -webkit-transform: translate(0, 0);
+    opacity: 1;
+  }
+}
+@keyframes stepsBounceIn {
+  0%, 20%, 40%, 60%, 80%, 100% {
+    transition-time-function: cubic-bezier(0.215, 0.61, 0.355, 1);
+  }
+  0% {
+    -moz-transform: scale(0.3, 0.3);
+    -ms-transform: scale(0.3, 0.3);
+    -webkit-transform: scale(0.3, 0.3);
+    transform: scale(0.3, 0.3);
+    filter: progid:DXImageTransform.Microsoft.Alpha(enabled=false);
+    opacity: 1;
+  }
+  20% {
+    -moz-transform: scale(1.1, 1.1);
+    -ms-transform: scale(1.1, 1.1);
+    -webkit-transform: scale(1.1, 1.1);
+    transform: scale(1.1, 1.1);
+    filter: progid:DXImageTransform.Microsoft.Alpha(enabled=false);
+    opacity: 1;
+  }
+  40% {
+    -moz-transform: scale(0.9, 0.9);
+    -ms-transform: scale(0.9, 0.9);
+    -webkit-transform: scale(0.9, 0.9);
+    transform: scale(0.9, 0.9);
+    filter: progid:DXImageTransform.Microsoft.Alpha(enabled=false);
+    opacity: 1;
+  }
+  60% {
+    -moz-transform: scale(1.03, 1.03);
+    -ms-transform: scale(1.03, 1.03);
+    -webkit-transform: scale(1.03, 1.03);
+    transform: scale(1.03, 1.03);
+    filter: progid:DXImageTransform.Microsoft.Alpha(enabled=false);
+    opacity: 1;
+  }
+  80% {
+    -moz-transform: scale(0.97, 0.97);
+    -ms-transform: scale(0.97, 0.97);
+    -webkit-transform: scale(0.97, 0.97);
+    transform: scale(0.97, 0.97);
+    filter: progid:DXImageTransform.Microsoft.Alpha(enabled=false);
+    opacity: 1;
+  }
+  100% {
+    -moz-transform: scale(1, 1);
+    -ms-transform: scale(1, 1);
+    -webkit-transform: scale(1, 1);
+    transform: scale(1, 1);
+    filter: progid:DXImageTransform.Microsoft.Alpha(enabled=false);
+    opacity: 1;
+  }
+}
+@-webkit-keyframes stepsBounceIn {
+  0%, 20%, 40%, 60%, 80%, 100% {
+    -webkit-transition-time-function: cubic-bezier(0.215, 0.61, 0.355, 1);
+  }
+  0% {
+    -webkit-transform: scale(0.3, 0.3);
+    opacity: 1;
+  }
+  20% {
+    -webkit-transform: scale(1.1, 1.1);
+    opacity: 1;
+  }
+  40% {
+    -webkit-transform: scale(0.9, 0.9);
+    opacity: 1;
+  }
+  60% {
+    -webkit-transform: scale(1.03, 1.03);
+    opacity: 1;
+  }
+  80% {
+    -webkit-transform: scale(0.97, 0.97);
+    opacity: 1;
+  }
+  100% {
+    -webkit-transform: scale(1, 1);
+    opacity: 1;
+  }
+}
+@keyframes stepsLineIn {
+  from {
+    background-position: right top;
+    opacity: 1;
+  }
+  to {
+    background-position: left top;
+    opacity: 1;
+  }
+}
+@-webkit-keyframes stepsLineIn {
+  from {
+    background-position: right top;
+    opacity: 1;
+  }
+  to {
+    background-position: left top;
+    opacity: 1;
+  }
+}
+@keyframes stepsTitleIn {
+  from {
+    -moz-transform: translate(0, 10px);
+    -ms-transform: translate(0, 10px);
+    -webkit-transform: translate(0, 10px);
+    transform: translate(0, 10px);
+    filter: progid:DXImageTransform.Microsoft.Alpha(Opacity=0);
+    opacity: 0;
+  }
+  to {
+    -moz-transform: translate(0, 0);
+    -ms-transform: translate(0, 0);
+    -webkit-transform: translate(0, 0);
+    transform: translate(0, 0);
+    filter: progid:DXImageTransform.Microsoft.Alpha(enabled=false);
+    opacity: 1;
+  }
+}
+@-webkit-keyframes stepsTitleIn {
+  from {
+    -webkit-transform: translate(0, 10px);
+    opacity: 0;
+  }
+  to {
+    -webkit-transform: translate(0, 0);
+    opacity: 1;
+  }
+}
